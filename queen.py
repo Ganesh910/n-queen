@@ -1,6 +1,9 @@
 import random
 import numpy as np
 
+class ExitLoop(Exception):
+    pass
+
 class nqueen:
 
     def __init__(self, n) -> None:
@@ -20,7 +23,6 @@ class nqueen:
         It will calculate the fitness in percentage for each chromosome.
         """
         mxm = ((self.n-1)*self.n)//2 # maximum number of non attacking pairs possible
-        mnm = 0
         fit = []
         fit_perecent=[]
         for ind1, pop in enumerate(self.population): #iterate over each chromosome
@@ -33,15 +35,17 @@ class nqueen:
                     # If a pair of queen is not attacking each other then + 1
                     if not self.check_attack((pop[i], i), (pop[j], j)):
                         pair+=1
+            if pair==mxm:
+
+                print("Here is the answer:--------------------\n", self.population[ind1])
+                raise ExitLoop
             fit.append(pair)
 
         total = sum(fit)
         
         for i in range(self.times):
             fit_perecent.append(round(fit[i]*100/total, 2))
-        
-        print("fit percent", fit_perecent)
-        print("fit", fit)
+
         return fit_perecent
                     
                 
@@ -71,8 +75,7 @@ class nqueen:
                 d[i]=1
             else:
                 d[i]+=1
-        print(d)
-        print("selected", selected)
+
         return selected
 
 
@@ -92,19 +95,31 @@ class nqueen:
                 new_pop[i+1][j] = self.population[sel[i]][j]
 
         self.population = new_pop
-        for pop in self.population:
-            for j in pop:
-                print(j, end=" ")
-            print("")
-            
+        
 
 
-    def mutation():
+    def mutation(self):
         """"
         Some random mutation would be applied to the populations anologous to the evolution.
         """
+        for chrom in self.population:
+            place = random.randint(0, self.n-1)
+            val = random.randint(0, self.n-1)
+            chrom[place] = val
 
-q = nqueen(4)
+    def generation(self, gen):
+        """
+        This function would be responsible for generations of the population
+        """
+
+        for i in range(gen):
+            try:
+                self.crossover()
+            except ExitLoop:
+                print(str(i)+"th gen")
+                exit()
+            self.mutation()
+
+q = nqueen(6)
 q.populate()
-print(q.population)
-q.crossover()
+q.generation(100000)
