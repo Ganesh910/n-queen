@@ -5,23 +5,19 @@ class ExitLoop(Exception):
     pass
 
 class nqueen:
-
     def __init__(self, n) -> None:
         self.n = n
         self.population = None
         self.no_of_chromosomes=50 #Change the value accordingly as keep the number even else code might not behave as expected
 
     def populate(self):
-        """
-        It creates a poplution of random places (chromosome) for queens in each column.
+        """It creates a poplution of random places (chromosome) for queens in each column.
         We will be taking even number for population for easy crossing over. (Won't create any differnce in working of This algo.)"""
 
         self.population = np.random.randint(0, self.n, size=(self.no_of_chromosomes, self.n))
 
     def fitness(self):
-        """
-        It will calculate the fitness in percentage for each chromosome.
-        """
+        """It will calculate the fitness in percentage for each chromosome."""
         mxm = ((self.n-1)*self.n)//2 # maximum number of non attacking pairs possible
         fit = []
         fit_perecent=[]
@@ -65,9 +61,7 @@ class nqueen:
         return False
 
     def selection(self):
-        """
-        For producing the next generation, it will create parents on the basis of fitness and probability and will also select the crossing over point.
-        """
+        """For producing the next generation, it will create parents on the basis of fitness and probability and will also select the crossing over point."""
         selected = random.choices(np.arange(0, self.no_of_chromosomes), self.fitness(), k=self.no_of_chromosomes)
         d={}
         for i in selected:
@@ -75,14 +69,11 @@ class nqueen:
                 d[i]=1
             else:
                 d[i]+=1
-
         return selected
 
 
     def crossover(self):
-        """
-        The actual process of crossing over will be performed here.
-        """
+        """The actual process of crossing over will be performed here."""
         new_pop = np.empty((self.no_of_chromosomes, self.n), dtype=int)
         sel = self.selection()
         for i in range(0, len(sel), 2):
@@ -93,25 +84,19 @@ class nqueen:
             for j in range(point, self.n):
                 new_pop[i][j] = self.population[sel[i+1]][j]
                 new_pop[i+1][j] = self.population[sel[i]][j]
-
         self.population = new_pop
         
 
 
     def mutation(self):
-        """"
-        Some random mutation would be applied to the populations anologous to the evolution.
-        """
+        """"Some random mutation would be applied to the populations anologous to the evolution."""
         for chrom in self.population:
             place = random.randint(0, self.n-1)
             val = random.randint(0, self.n-1)
             chrom[place] = val
 
     def generation(self, gen):
-        """
-        This function would be responsible for generations of the population
-        """
-
+        """This function would be responsible for generations of the population"""
         for i in range(gen):
             try:
                 self.crossover()
