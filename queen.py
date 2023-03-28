@@ -9,14 +9,14 @@ class nqueen:
     def __init__(self, n) -> None:
         self.n = n
         self.population = None
-        self.times=2
+        self.no_of_chromosomes=50 #Change the value accordingly as keep the number even else code might not behave as expected
 
     def populate(self):
         """
         It creates a poplution of random places (chromosome) for queens in each column.
         We will be taking even number for population for easy crossing over. (Won't create any differnce in working of This algo.)"""
 
-        self.population = np.random.randint(0, self.n, size=(self.times, self.n))
+        self.population = np.random.randint(0, self.n, size=(self.no_of_chromosomes, self.n))
 
     def fitness(self):
         """
@@ -43,7 +43,7 @@ class nqueen:
 
         total = sum(fit)
         
-        for i in range(self.times):
+        for i in range(self.no_of_chromosomes):
             fit_perecent.append(round(fit[i]*100/total, 2))
 
         return fit_perecent
@@ -68,7 +68,7 @@ class nqueen:
         """
         For producing the next generation, it will create parents on the basis of fitness and probability and will also select the crossing over point.
         """
-        selected = random.choices(np.arange(0, self.times), self.fitness(), k=self.times)
+        selected = random.choices(np.arange(0, self.no_of_chromosomes), self.fitness(), k=self.no_of_chromosomes)
         d={}
         for i in selected:
             if i not in d:
@@ -83,7 +83,7 @@ class nqueen:
         """
         The actual process of crossing over will be performed here.
         """
-        new_pop = np.empty((self.times, self.n), dtype=int)
+        new_pop = np.empty((self.no_of_chromosomes, self.n), dtype=int)
         sel = self.selection()
         for i in range(0, len(sel), 2):
             point = random.randint(1, self.n-1)
@@ -122,4 +122,4 @@ class nqueen:
 
 q = nqueen(6)
 q.populate()
-q.generation(100000)
+q.generation(10000) #Choose number of generations accordinly, way too large number may take long time to execute
