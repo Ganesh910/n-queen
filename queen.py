@@ -1,6 +1,5 @@
 import random
 import numpy as np
-
 class ExitLoop(Exception):
     pass
 
@@ -39,9 +38,11 @@ class nqueen:
 
         total = sum(fit)
         
-        for i in range(self.no_of_chromosomes):
-            fit_perecent.append(round(fit[i]*100/total, 2))
+        #for i in range(self.no_of_chromosomes):
+        #    fit_perecent.append(round(fit[i]*100/total, 2))
 
+        #Used List Comprehension here
+        fit_perecent = [round((fit[i]*100/total),2) for i in range(self.no_of_chromosomes)]    
         return fit_perecent
                     
                 
@@ -78,12 +79,13 @@ class nqueen:
         sel = self.selection()
         for i in range(0, len(sel), 2):
             point = random.randint(1, self.n-1)
-            for j in range(0, point):
-                new_pop[i][j] = self.population[sel[i]][j]
-                new_pop[i+1][j] = self.population[sel[i+1]][j]
-            for j in range(point, self.n):
-                new_pop[i][j] = self.population[sel[i+1]][j]
-                new_pop[i+1][j] = self.population[sel[i]][j]
+            point = random.randint(1, self.n-1)
+
+            #Used List Slicing techniques here
+            new_pop[i][:point] = self.population[sel[i]][:point]
+            new_pop[i+1][:point] = self.population[sel[i+1]][:point]
+            new_pop[i][point:] = self.population[sel[i+1]][point:]
+            new_pop[i+1][point:] = self.population[sel[i]][point:]
         self.population = new_pop
         
 
