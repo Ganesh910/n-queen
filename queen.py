@@ -1,3 +1,13 @@
+"""This program solves the n-queens problem by using genetic algorithm approach(which is a np-complete problem)so it doesn't use brute force
+   there are several steps followed in the genetic algorithm
+   1. Population - the method populate creates a large no of chromosomes by placing one queen randomly in the array(chromosome)
+   2. Fitness - Number of non attacking pairs in a chromosome is calculated
+   3. Selection - Only the fittest chromosomes are selected
+   4. Crossover - chromosomes are crossed over to create the fittest pairs possible
+   5. Mutation - Some random genes are changed in the chromosomes to create a new diversity of chromosomes(solution)
+   Finally it combines the best of the best solutions to form a best single solution
+"""
+
 import random
 import numpy as np
 class ExitLoop(Exception):
@@ -65,8 +75,8 @@ class nqueen:
         """For producing the next generation, it will create parents on the basis of fitness and probability and will also select the crossing over point."""
         selected = random.choices(np.arange(0, self.no_of_chromosomes), self.fitness(), k=self.no_of_chromosomes)
         d={}
-        for i in selected:
-            if i not in d:
+        for i in selected:# iterating through every chromosome
+            if i not in d:# if the chromomsome is fit , it is selected
                 d[i]=1
             else:
                 d[i]+=1
@@ -78,7 +88,7 @@ class nqueen:
         new_pop = np.empty((self.no_of_chromosomes, self.n), dtype=int)
         sel = self.selection()
         for i in range(0, len(sel), 2):
-            point = random.randint(1, self.n-1)
+            point = random.randint(1, self.n-1)# crossing of the genes at random points
             point = random.randint(1, self.n-1)
 
             #Used List Slicing techniques here
@@ -95,18 +105,18 @@ class nqueen:
         for chrom in self.population:
             place = random.randint(0, self.n-1)
             val = random.randint(0, self.n-1)
-            chrom[place] = val
+            chrom[place] = val  # random mutation taking place
 
     def generation(self, gen):
         """This function would be responsible for generations of the population"""
         for i in range(gen):
             try:
-                self.crossover()
-            except ExitLoop:
+                self.crossover()# creating 100000 generations of correct solutions
+            except ExitLoop:# if an error occurs , it stops the generation showing that it has got the best solution
                 print(str(i)+"th gen")
                 exit()
-            self.mutation()
+            self.mutation()# mutating the last generation to find a best solution
 
-q = nqueen(6)
+q = nqueen(6)# 6 queens should be placed in 6X6 chessboard
 q.populate()
 q.generation(10000) #Choose number of generations accordinly, way too large number may take long time to execute
