@@ -61,11 +61,7 @@ class nqueen:
             fit.append(pair)
 
         total = sum(fit)
-
-        # for i in range(self.no_of_chromosomes):
-        #    fit_perecent.append(round(fit[i]*100/total, 2))
-
-        # Used List Comprehension here
+        
         fit_perecent = [round((fit[i]*100/total), 2)
                         for i in range(self.no_of_chromosomes)]
         return fit_perecent
@@ -104,7 +100,6 @@ class nqueen:
         for i in range(0, len(sel), 2):
             # crossing of the genes at random points
             point = random.randint(1, self.n-1)
-            point = random.randint(1, self.n-1)
 
             # Used List Slicing techniques here
             new_pop[i][:point] = self.population[sel[i]][:point]
@@ -128,7 +123,7 @@ class nqueen:
             except ExitLoop:  # if an error occurs , it stops the generation showing that it has got the best solution
                 print(str(i)+"th gen")
                 exit()
-            self.mutation()  # mutating the last generation to find a best solution
+            self.mutation()
 
 
 q = nqueen(6)  # 6 queens should be placed in 6X6 chessboard
