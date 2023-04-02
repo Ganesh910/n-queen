@@ -1,41 +1,30 @@
-"""This program solves the n-queens problem by using genetic algorithm approach(which is a np-complete problem)so it doesn't use brute force
-   there are several steps followed in the genetic algorithm
-   1. Population - the method populate creates a large no of chromosomes by placing one queen randomly in the array(chromosome)
-   2. Fitness - Number of non attacking pairs in a chromosome is calculated
-   3. Selection - Only the fittest chromosomes are selected
-   4. Crossover - chromosomes are crossed over to create the fittest pairs possible
-   5. Mutation - Some random genes are changed in the chromosomes to create a new diversity of chromosomes(solution)
-   Finally it combines the best of the best solutions to form a best single solution
-"""
-
 import random
 import numpy as np
+from visual_queen import matrix_render
 
 
 class ExitLoop(Exception):
-    pass
     """
     Raises:
-        ExitLoop
+        ExitLoop """
+    pass
 
-    Returns:
-        None
-    """    
 
 class nqueen:
     def __init__(self, n) -> None:
         self.n = n
         self.population = None
-        # Change the value accordingly as keep the number even else code might not behave as expected
-        self.no_of_chromosomes = 50
+        # Change the CHROMOSOME_COUNT accordingly and keep the number even else code might not behave as expected
+        self.CHROMOSOME_COUNT = 50
+        self.solution(generation=10000)
+        self.ans = None
 
-
-    def populate(self):   
+    def populate(self):
         """It creates a population of random places (chromosome) for queens in each column.
         We will be taking even number for population for easy crossing over. (Won't create any differnce in working of This algo.)"""
 
         self.population = np.random.randint(
-            0, self.n, size=(self.no_of_chromosomes, self.n))
+            0, self.n, size=(self.CHROMOSOME_COUNT, self.n))
 
     def fitness(self):
         """It will calculate the fitness in percentage for each chromosome."""
@@ -45,7 +34,7 @@ class nqueen:
         # iterate over each chromosome
         for ind1, pop in enumerate(self.population):
             pair = 0
-            
+
             # nested for loop to iterate over each value of chromosome and do comparisons with each pair possible.
             for i in range(len(pop)):
                 for j in range(i+1, len(pop)):
@@ -53,17 +42,16 @@ class nqueen:
                     # If a pair of queen is not attacking each other then + 1
                     if not self.check_attack((pop[i], i), (pop[j], j)):
                         pair += 1
-            if pair == mxm:
 
-                print("Here is the answer:--------------------\n",
-                      self.population[ind1])
+            if pair == mxm:
+                self.ans = self.population[ind1]
                 raise ExitLoop
             fit.append(pair)
 
         total = sum(fit)
-        
+
         fit_perecent = [round((fit[i]*100/total), 2)
-                        for i in range(self.no_of_chromosomes)]
+                        for i in range(self.CHROMOSOME_COUNT)]
         return fit_perecent
 
     def check_attack(self, cord1, cord2):
@@ -81,22 +69,15 @@ class nqueen:
 
         return False
 
-    def selection(self):
+    def selection(self, percent):
         """For producing the next generation, it will create parents on the basis of fitness and probability and will also select the crossing over point."""
         selected = random.choices(
-            np.arange(0, self.no_of_chromosomes), self.fitness(), k=self.no_of_chromosomes)
-        d = {}
-        for i in selected:  # iterating through every chromosome
-            if i not in d:  # if the chromosome is fit , it is selected
-                d[i] = 1
-            else:
-                d[i] += 1
+            np.arange(0, self.CHROMOSOME_COUNT), percent, k=self.CHROMOSOME_COUNT)
         return selected
 
-    def crossover(self):
+    def crossover(self, sel):
         """The actual process of crossing over will be performed here."""
-        new_pop = np.empty((self.no_of_chromosomes, self.n), dtype=int)
-        sel = self.selection()
+        new_pop = np.empty((self.CHROMOSOME_COUNT, self.n), dtype=int)
         for i in range(0, len(sel), 2):
             # crossing of the genes at random points
             point = random.randint(1, self.n-1)
@@ -115,18 +96,32 @@ class nqueen:
             val = random.randint(0, self.n-1)
             chrom[place] = val  # random mutation taking place
 
-    def generation(self, gen):
+    def solution(self, generation):
         """This function would be responsible for generations of the population"""
-        for i in range(gen):
+        self.populate()  # Generate random population
+        for i in range(generation):
             try:
-                self.crossover()  # creating 100000 generations of correct solutions
+                percent = self.fitness()  # Then calculate the fitness of each
             except ExitLoop:  # if an error occurs , it stops the generation showing that it has got the best solution
-                print(str(i)+"th gen")
+                print(str(i)+"th generation resulted : ", self.ans)
+                print(matrix_render(self.ans))
                 exit()
-            self.mutation()
+            # on the basis of fitness, select randomly
+            selected = self.selection(percent)
+            # Do crossing over among the selected chromosomes.
+            self.crossover(selected)
+            self.mutation()  # Finally make some mutation
+        print("Sorry! Unable to find Solution. Try increasing number of Generations or pairs of Chromosomes")
 
 
-q = nqueen(6)  # 6 queens should be placed in 6X6 chessboard
-q.populate()
-# Choose number of generations accordingly, way too large number may take long time to execute
-q.generation(10000)
+def main():
+    n = int(input("Enter the number of queens to be placed : "))
+    if n <= 3:
+        print("Enter n>=4")
+        return
+
+    q = nqueen(n)  # Number of queens
+
+
+if __name__ == "__main__":
+    main()
