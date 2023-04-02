@@ -1,25 +1,12 @@
-"""This program solves the n-queens problem by using genetic algorithm approach(which is a np-complete problem)so it doesn't use brute force
-   there are several steps followed in the genetic algorithm
-   1. Population - the method populate creates a large no of chromosomes by placing one queen randomly in the array(chromosome)
-   2. Fitness - Number of non attacking pairs in a chromosome is calculated
-   3. Selection - Only the fittest chromosomes are selected
-   4. Crossover - chromosomes are crossed over to create the fittest pairs possible
-   5. Mutation - Some random genes are changed in the chromosomes to create a new diversity of chromosomes(solution)
-   Finally it combines the best of the best solutions to form a best single solution
-"""
-
 import random
 import numpy as np
+from visual_queen import matrix_render
 
 
 class ExitLoop(Exception):
     """
     Raises:
-        ExitLoop
-
-    Returns:
-        None
-    """
+        ExitLoop """
     pass
 
 
@@ -30,6 +17,7 @@ class nqueen:
         # Change the CHROMOSOME_COUNT accordingly and keep the number even else code might not behave as expected
         self.CHROMOSOME_COUNT = 50
         self.solution(generation=10000)
+        self.ans = None
 
     def populate(self):
         """It creates a population of random places (chromosome) for queens in each column.
@@ -56,9 +44,7 @@ class nqueen:
                         pair += 1
 
             if pair == mxm:
-
-                print("----------------Here is the answer:--------------------\n",
-                      self.population[ind1])
+                self.ans = self.population[ind1]
                 raise ExitLoop
             fit.append(pair)
 
@@ -112,21 +98,30 @@ class nqueen:
 
     def solution(self, generation):
         """This function would be responsible for generations of the population"""
-        self.populate() # Generate random population
+        self.populate()  # Generate random population
         for i in range(generation):
             try:
-                percent = self.fitness() # Then calculate the fitness of each
+                percent = self.fitness()  # Then calculate the fitness of each
             except ExitLoop:  # if an error occurs , it stops the generation showing that it has got the best solution
-                print(str(i)+"th generation resulted")
+                print(str(i)+"th generation resulted : ", self.ans)
+                print(matrix_render(self.ans))
                 exit()
-            selected = self.selection(percent) # on the basis of fitness, select randomly
-            self.crossover(selected)  # Do crossing over among the selected chromosomes.
-            self.mutation()
+            # on the basis of fitness, select randomly
+            selected = self.selection(percent)
+            # Do crossing over among the selected chromosomes.
+            self.crossover(selected)
+            self.mutation()  # Finally make some mutation
         print("Sorry! Unable to find Solution. Try increasing number of Generations or pairs of Chromosomes")
 
 
 def main():
-    q = nqueen(n=7)  # Number of queens
+    n = int(input("Enter the number of queens to be placed : "))
+    if n <= 3:
+        print("Enter n>=4")
+        return
+
+    q = nqueen(n)  # Number of queens
+
 
 if __name__ == "__main__":
     main()
