@@ -124,6 +124,18 @@ class nqueen:
                 print(str(i)+"th gen")
                 exit()
             self.mutation()
+        
+    def backtrack():
+        """
+        Function returns sinlge bruteforce solution.
+        """
+        ...
+    
+    def findAll():
+        """
+        Function returns set of all solutions to the problem.
+        """
+        ...
 
 
 q = nqueen(6)  # 6 queens should be placed in 6X6 chessboard
