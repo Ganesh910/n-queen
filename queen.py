@@ -16,15 +16,25 @@ class nqueen:
         self.population = None
         # Change the CHROMOSOME_COUNT accordingly and keep the number even else code might not behave as expected
         self.CHROMOSOME_COUNT = 50
-        self.solution(generation=10000)
+        self.solution(generation=100000)
         self.ans = None
 
     def populate(self):
         """It creates a population of random places (chromosome) for queens in each column.
         We will be taking even number for population for easy crossing over. (Won't create any differnce in working of This algo.)"""
 
-        self.population = np.random.randint(
-            0, self.n, size=(self.CHROMOSOME_COUNT, self.n))
+        # Create an array of m x n size where m = chromosome count, n = self.n
+        self.population = np.empty((self.CHROMOSOME_COUNT, self.n), dtype=int)
+
+        # Iterate over each row and fill non clashing random values in it
+        for i in range(self.CHROMOSOME_COUNT):
+            s=set(range(self.n))
+            for j in range(self.n):
+                val = random.sample(s, 1)
+                self.population[i][j] = val[0]
+                s.remove(val[0])
+        # self.population = np.random.randint(
+        #     0, self.n, size=(self.CHROMOSOME_COUNT, self.n))
 
     def fitness(self):
         """It will calculate the fitness in percentage for each chromosome."""
@@ -92,9 +102,12 @@ class nqueen:
     def mutation(self):
         """"Some random mutation would be applied to the populations analogous to the evolution."""
         for chrom in self.population:
-            place = random.randint(0, self.n-1)
-            val = random.randint(0, self.n-1)
-            chrom[place] = val  # random mutation taking place
+            times = random.randint(0, (self.n-1)//2)  # mutating random times with random value at random place
+            for _ in range(1):
+
+                place = random.randint(0, self.n-1)
+                val = random.randint(0, self.n-1)
+                chrom[place] = val  # random mutation taking place
 
     def solution(self, generation):
         """This function would be responsible for generations of the population"""
